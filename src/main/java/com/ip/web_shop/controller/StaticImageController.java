@@ -34,12 +34,12 @@ public class StaticImageController {
     }
 
     @PostMapping(value="/pictures/offers/{id}", consumes= MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void addPicture(@RequestPart("file")MultipartFile multipartFile, @PathVariable Integer id){
-        pictureService.add(multipartFile, id);
+    public void addPicture(@RequestPart("files")MultipartFile[] multipartFiles, @PathVariable Integer id){
+        pictureService.add(multipartFiles, id);
     }
 
     @PostMapping("/avatars/users/{id}")
-    public void addAvatar(@RequestParam("file")MultipartFile multipartFile, @PathVariable Integer id){
-        avatarService.add(multipartFile, id);
+    public Integer addAvatar(@RequestParam("file")MultipartFile multipartFile, @PathVariable Integer id){
+        return avatarService.add(multipartFile, id);
     }
 }

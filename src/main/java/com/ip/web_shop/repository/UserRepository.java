@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
-    @Query("SELECT u FROM User u INNER JOIN FETCH u.avatar WHERE u.userId = :userId")
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.avatar WHERE u.userId = :userId")
     Optional<User> findByIdIncludeAvatar(int userId);
 
-    @Query("SELECT u FROM User u WHERE u.userName = :userName AND u.password = :password")
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.activationCodes WHERE u.userName = :userName AND u.password = :password")
     Optional<User> findByUsernameAndPassword(String userName, String password);
 }

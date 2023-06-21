@@ -34,17 +34,18 @@ public class AvatarServiceImpl implements AvatarService {
     public int add(MultipartFile pictureFile, int userId) {
         try {
             User u = userRepository.findByIdIncludeAvatar(userId).orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
-            if (u.getAvatar() == null)
+            if (u.getAvatar() != null)
                 throw new ConflictException("User with id " + userId + " already has an avatar");
+            String fileName = Paths.get(pictureFile.getOriginalFilename()).getFileName().toString();
             Avatar avatar = new Avatar();
             avatar.setAvatarId(null);
-            String fileName = Paths.get(pictureFile.getOriginalFilename()).getFileName().toString();
-            Files.write(Paths.get(avatarsFolderPath).resolve(fileName), pictureFile.getBytes());
             //avatar.setBytes(pictureFile.getBytes());
             avatar.setFileName(fileName);
             avatar.setContent_type(pictureFile.getContentType());
             u.setAvatar(avatar);
+            avatar.setUser(u);
             avatar = avatarRepository.saveAndFlush(avatar);
+            Files.write(Paths.get(avatarsFolderPath).resolve(fileName), pictureFile.getBytes());
             return avatar.getAvatarId();
         } catch (IOException e) {
             throw new HttpException(500, "An error occurred");

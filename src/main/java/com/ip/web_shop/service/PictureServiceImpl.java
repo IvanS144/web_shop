@@ -30,7 +30,7 @@ public class PictureServiceImpl implements PictureService {
     }
 
     @Override
-    public int add(MultipartFile pictureFile, int offerId){
+    public void add(MultipartFile pictureFile, int offerId) {
         try {
             Offer offer = offerRepository.findById(offerId).orElseThrow(() -> new NotFoundException("Offer with id " + offerId + " not found"));
             Picture picture = new Picture();
@@ -43,9 +43,8 @@ public class PictureServiceImpl implements PictureService {
             picture.setOffer(offer);
             offer.getPictures().add(picture);
             picture = pictureRepository.saveAndFlush(picture);
-            return picture.getPictureId();
-        }
-        catch(IOException e){
+            //return picture.getPictureId();
+        } catch (IOException e) {
             e.printStackTrace();
             throw new HttpException(500, "An error occurred");
         }
@@ -53,8 +52,15 @@ public class PictureServiceImpl implements PictureService {
     }
 
     @Override
-    public PictureBytesDTO getBytesById(int id){
-        Picture picture = pictureRepository.findById(id).orElseThrow(()-> new NotFoundException("Picture not found"));
+    public void add(MultipartFile[] pictureFiles, int offerId) {
+        for (MultipartFile pictureFile : pictureFiles) {
+            add(pictureFile, offerId);
+        }
+    }
+
+    @Override
+    public PictureBytesDTO getBytesById(int id) {
+        Picture picture = pictureRepository.findById(id).orElseThrow(() -> new NotFoundException("Picture not found"));
         PictureBytesDTO bytesDTO = new PictureBytesDTO();
         try {
             byte[] bytes = Files.readAllBytes(Paths.get(picturesFolderPath).resolve(picture.getFileName()));

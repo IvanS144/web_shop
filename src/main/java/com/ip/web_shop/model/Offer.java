@@ -35,6 +35,9 @@ public class Offer {
     @Basic
     @Column(name = "quantity")
     private Integer quantity;
+    @Basic
+    @Column(name="deleted")
+    private Boolean deleted;
     @ManyToMany
     @JoinTable(
             name="offer_has_category",
@@ -51,6 +54,8 @@ public class Offer {
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
+    @OneToMany(mappedBy = "offer")
+    private Set<Question> questions;
 
     public boolean isSearchComplaint(List<AttributeRequest> criteriaList){
         //TODO pomocu equals i contains

@@ -39,7 +39,7 @@ public class PurchaseController {
         return ResponseEntity.status(HttpStatus.OK).body(purchaseReply);
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/users/{id}")
     public ResponseEntity<Page<PurchaseDTO>> getByUserId(@PathVariable Integer id,
                                                          @RequestParam(name ="page_size", defaultValue = "10", required = false) Integer pageSize,
                                                          @RequestParam(name="page", defaultValue = "0", required = false) Integer page){

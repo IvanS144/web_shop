@@ -47,13 +47,19 @@ public class UserController {
     }
 
     @PostMapping("/activation")
-    public ResponseEntity<Boolean> activate(ActivationRequest request){
+    public ResponseEntity<Boolean> activate(@RequestBody ActivationRequest request){
         if(userService.activate(request)){
             return ResponseEntity.status(200).body(true);
         }
         else{
             return ResponseEntity.status(200).body(false);
         }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> getById(@PathVariable Integer id){
+        UserDTO userDTO = userService.findById(id, UserDTO.class);
+        return ResponseEntity.status(HttpStatus.OK).body(userDTO);
     }
 
 

@@ -15,8 +15,6 @@ public class OfferRequest {
     //private Integer offerId;
     @NotBlank
     private String title;
-    @NotBlank
-    private String text;
     @NotNull
     private Double price;
     @NotBlank

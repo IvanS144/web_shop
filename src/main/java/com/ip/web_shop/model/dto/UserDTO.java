@@ -12,4 +12,5 @@ public class UserDTO {
     private String password;
     private Boolean activated;
     private CityDTO city;
+    private AvatarDTO avatar;
 }

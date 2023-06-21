@@ -10,9 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.PublicKey;
-import java.util.List;
-
 @RestController
 @RequestMapping("/offers")
 @CrossOrigin(origins = "http://localhost:4200")
@@ -62,12 +59,24 @@ public class OfferController {
         return ResponseEntity.status(HttpStatus.OK).body(offer);
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/users/{id}")
     public ResponseEntity<Page<OfferDTO>> getByUserId(@RequestParam(name ="page_size", defaultValue = "10", required = false) Integer pageSize,
                                                       @RequestParam(name="page", defaultValue = "0", required = false) Integer page,
                                                       @PathVariable Integer id){
         Page<OfferDTO> offers = offerService.findByUserId(id, page, pageSize, OfferDTO.class);
         return ResponseEntity.status(HttpStatus.OK).body(offers);
+    }
+
+    @DeleteMapping("/{id}")
+    public void markAsDeleted(@PathVariable Integer id){
+        offerService.setDeleted(id, true);
+    }
+
+    @PatchMapping("/{id}")
+    public void applySmallChanges(@PathVariable Integer id, @RequestBody OfferDTO offerDTO){
+        if(offerDTO.getDeleted()!=null){
+            offerService.setDeleted(id, offerDTO.getDeleted());
+        }
     }
 
 

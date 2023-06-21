@@ -18,4 +18,5 @@ public interface UserService {
     <T> T updateFromRequest(UserRequest userRequest, int id, Class<T> returnType);
 
     boolean activate(ActivationRequest activationRequest);
+    <T> T findById(int id, Class<T> returnType);
 }

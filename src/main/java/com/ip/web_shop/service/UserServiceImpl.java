@@ -29,14 +29,16 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final CityRepository cityRepository;
     private final ActivationCodeRepository activationCodeRepository;
+    private final EmailService emailService;
     @PersistenceContext
     private EntityManager entityManager;
 
-    public UserServiceImpl(ModelMapper modelMapper, UserRepository userRepository, CityRepository cityRepository, ActivationCodeRepository activationCodeRepository) {
+    public UserServiceImpl(ModelMapper modelMapper, UserRepository userRepository, CityRepository cityRepository, ActivationCodeRepository activationCodeRepository, EmailService emailService) {
         this.modelMapper = modelMapper;
         this.userRepository = userRepository;
         this.cityRepository = cityRepository;
         this.activationCodeRepository = activationCodeRepository;
+        this.emailService = emailService;
     }
 
     @Override
@@ -55,10 +57,11 @@ public class UserServiceImpl implements UserService {
         user.setActivated(false);
         user = userRepository.saveAndFlush(user);
         ActivationCode activationCode = new ActivationCode();
-        activationCode.setValue(String.valueOf(new SecureRandom().nextInt(10000)));
-        activationCode.setValidUntil(LocalDateTime.now().plusHours(24L));
+        activationCode.setValue(String.valueOf(new SecureRandom().nextInt(1000,10000)));
+        activationCode.setValidUntil(LocalDateTime.now().plusMinutes(15L));
         activationCode.setUser(user);
         activationCodeRepository.saveAndFlush(activationCode);
+        emailService.sendEmail("Naslov", activationCode.getValue(), user.getEmail());
         return modelMapper.map(user, returnType);
     }
 
@@ -81,6 +84,7 @@ public class UserServiceImpl implements UserService {
         if(!userRepository.existsById(id))
             throw new NotFoundException("Could not find user with id "+id);
         User user = modelMapper.map(userRequest, User.class);
+        user.setActivated(true);
         City city = cityRepository.findById(userRequest.getCityId())
                 .orElseThrow(()-> new NotFoundException("City with id " + userRequest.getCityId() +" not found"));
         user.setCity(city);
@@ -95,5 +99,11 @@ public class UserServiceImpl implements UserService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public <T> T findById(int id, Class<T> returnType) {
+        User user =  userRepository.findById(id).orElseThrow(()-> new NotFoundException("User with id "+ id +" not found"));
+        return modelMapper.map(user, returnType);
     }
 }

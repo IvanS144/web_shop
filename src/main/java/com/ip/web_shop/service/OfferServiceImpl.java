@@ -59,6 +59,7 @@ public class OfferServiceImpl implements OfferService {
         offer.setUser(user);
         user.getOffers().add(offer);
         offer.setOfferId(null);
+        offer.setDeleted(false);
         offerRepository.saveAndFlush(offer);
         entityManager.refresh(offer);
 
@@ -88,7 +89,7 @@ public class OfferServiceImpl implements OfferService {
 //        List<Offer> offersList = offersPage.toList();
 //        return offersList.stream().map(offer -> modelMapper.map(offer, returnType)).toList();
         Pageable pageRequest = PageRequest.of(page, pageSize);
-        Page<Offer> offersPage = offerRepository.findAll(pageRequest);
+        Page<Offer> offersPage = offerRepository.findAllByDeletedIsFalseAndQuantityGreaterThan(0,pageRequest);
         List<T> offerDTOList = offersPage.getContent().stream().map(offer -> modelMapper.map(offer, returnType)).toList();
         Page<T> resultPage = new PageImpl<T>(offerDTOList, pageRequest, offersPage.getTotalElements());
         return resultPage;
@@ -100,7 +101,7 @@ public class OfferServiceImpl implements OfferService {
 //        List<Offer> offersList = offersPage.toList();
 //        return offersList.stream().map(offer -> modelMapper.map(offer, returnType)).toList();
         Pageable pageRequest = PageRequest.of(page, pageSize);
-        Page<Offer> offersPage = offerRepository.findAll(pageRequest);
+        Page<Offer> offersPage = offerRepository.findAllByQuantityGreaterThan(0, pageRequest);
         List<OfferDTO> offerDTOList = offersPage.getContent().stream().map(offer -> modelMapper.map(offer, OfferDTO.class)).toList();
         Page<OfferDTO> resultPage = new PageImpl<>(offerDTOList, pageRequest, offersPage.getTotalElements());
         return resultPage;
@@ -183,5 +184,10 @@ public class OfferServiceImpl implements OfferService {
         List<T> offerDTOList = offersPage.getContent().stream().map(offer -> modelMapper.map(offer, returnType)).toList();
         Page<T> resultPage = new PageImpl<>(offerDTOList, pageRequest, offersPage.getTotalElements());
         return resultPage;
+    }
+
+    @Override
+    public void setDeleted(int offerId, boolean deleted) {
+        offerRepository.setDeleted(offerId, deleted);
     }
 }

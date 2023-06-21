@@ -15,8 +15,11 @@ public class OfferDTO {
     private boolean isNew;
     private UserDTO user;
     private Integer quantity;
+    private Boolean deleted;
     private List<OfferAttributeDTO> attributes;
     private List<CategoryDTO> categories;
+    private List<PictureDTO> pictures;
+    private List<QuestionDTO> questions;
 
     public boolean isSearchComplaint(List<AttributeRequest> criteriaList){
         //TODO pomocu equals i contains

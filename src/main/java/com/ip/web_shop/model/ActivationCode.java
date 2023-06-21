@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class ActivationCode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="activation_code_id")
     private Integer activationCodeId;
     @Basic
     @Column(name = "value")

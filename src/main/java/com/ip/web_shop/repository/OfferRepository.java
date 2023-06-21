@@ -1,10 +1,10 @@
 package com.ip.web_shop.repository;
 
 import com.ip.web_shop.model.Offer;
-import com.ip.web_shop.model.dto.OfferDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public interface OfferRepository extends JpaRepository<Offer, Integer> {
 //    <T> Page<T> findAll(Pageable pageRequest, Class<T> returnType);
     @Query("""
     SELECT DISTINCT offer FROM Offer offer LEFT JOIN FETCH offer.categories category INNER JOIN FETCH offer.attributes
-    WHERE (offer.quantity > 0) AND
+    WHERE (offer.deleted = false) AND (offer.quantity > 0) AND
     ((:text IS NULL) OR (offer.title LIKE %:text%))
     AND ((:categoryId IS NULL) OR (category.categoryId=:categoryId))
     AND ((:priceFrom IS NULL) OR (offer.price >= :priceFrom))
@@ -27,4 +27,12 @@ public interface OfferRepository extends JpaRepository<Offer, Integer> {
     AND ((:isNew IS NULL) OR (offer.isNew = :isNew))
     """)
     List<Offer> findByTitleAndCategory(String text, Integer categoryId, Double priceFrom, Double priceTo, Boolean isNew);
+
+    @Modifying
+    @Query("UPDATE Offer o SET o.deleted = :deleted WHERE o.offerId = :offerId")
+    void setDeleted(Integer offerId, Boolean deleted);
+
+    Page<Offer> findAllByDeletedIsFalseAndQuantityGreaterThan(Integer quantity, Pageable page);
+
+    Page<Offer> findAllByQuantityGreaterThan(Integer quantity, Pageable pageable);
 }
