@@ -35,4 +35,9 @@ public interface OfferRepository extends JpaRepository<Offer, Integer> {
     Page<Offer> findAllByDeletedIsFalseAndQuantityGreaterThan(Integer quantity, Pageable page);
 
     Page<Offer> findAllByQuantityGreaterThan(Integer quantity, Pageable pageable);
+
+    Page<Offer> findAllByDeletedIsTrueAndUserUserId(Integer userId, Pageable pageable);
+
+    @Query("SELECT offer FROM Offer offer WHERE offer.quantity = 0 AND offer.deleted = false AND offer.user.userId = :userId")
+    Page<Offer> findConcludedByUserId(Integer userId, Pageable pageable);
 }

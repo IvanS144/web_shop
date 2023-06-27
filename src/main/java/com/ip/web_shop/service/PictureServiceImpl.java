@@ -15,6 +15,8 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 @Transactional
@@ -36,9 +38,10 @@ public class PictureServiceImpl implements PictureService {
             Picture picture = new Picture();
             picture.setPictureId(null);
             String fileName = Paths.get(pictureFile.getOriginalFilename()).getFileName().toString();
-            Files.write(Paths.get(picturesFolderPath).resolve(fileName), pictureFile.getBytes());
+            String timestampPrefix = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss_"));
+            Files.write(Paths.get(picturesFolderPath).resolve(timestampPrefix+fileName), pictureFile.getBytes());
             //picture.setBytes(pictureFile.getBytes());
-            picture.setFileName(fileName);
+            picture.setFileName(timestampPrefix+fileName);
             picture.setContent_type(pictureFile.getContentType());
             picture.setOffer(offer);
             offer.getPictures().add(picture);

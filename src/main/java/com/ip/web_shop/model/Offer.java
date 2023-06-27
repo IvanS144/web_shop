@@ -59,7 +59,7 @@ public class Offer {
 
     public boolean isSearchComplaint(List<AttributeRequest> criteriaList){
         //TODO pomocu equals i contains
-        criteriaList = criteriaList.stream().filter(criteria -> (!criteria.getValue().isEmpty())&&(!criteria.getValue().isBlank())).toList();
+        //criteriaList = criteriaList.stream().filter(criteria -> (!criteria.getValue().isEmpty())&&(!criteria.getValue().isBlank())).toList();
         int count = 0;
         for(var attribute : attributes){
             if(count==criteriaList.size()){

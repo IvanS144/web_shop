@@ -38,7 +38,7 @@ public class LoginServiceImpl implements LoginService{
                 ActivationCode activationCode = new ActivationCode();
                 String activationCodeValue = String.valueOf(new SecureRandom().nextInt(10000));
                 activationCode.setValue(activationCodeValue);
-                activationCode.setValidUntil(LocalDateTime.now().plusMinutes(15L));
+                activationCode.setValidUntil(LocalDateTime.now().plusMinutes(1L));
                 activationCode.setUser(u);
                 activationCodeRepository.saveAndFlush(activationCode);
                 emailService.sendEmail("Naslov", activationCodeValue, u.getEmail());

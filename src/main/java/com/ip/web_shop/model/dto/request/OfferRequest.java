@@ -19,7 +19,7 @@ public class OfferRequest {
     private Double price;
     @NotBlank
     private String location;
-    private boolean isNew;
+    private Boolean isNew;
     @Min(value = 1)
     @NotNull
     private Integer userId;

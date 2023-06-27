@@ -152,6 +152,9 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public Page<OfferDTO> filter(SearchRequest criteria, int page, int pageSize){
+        if(criteria.getText()!=null && (criteria.getText().isEmpty() || criteria.getText().isBlank())) criteria.setText(null);
+        criteria.setAttributes(criteria.getAttributes().stream().filter(attributeRequest -> (attributeRequest.getValue()!=null) && (!attributeRequest.getValue().isEmpty()) && (!attributeRequest.getValue().isBlank())).toList());
+
         List<Offer> offers = offerRepository.findByTitleAndCategory(criteria.getText(), criteria.getCategoryId(), criteria.getPriceFrom(), criteria.getPriceTo(), criteria.getIsNew());
 
         if(criteria.getCategoryId()!=null){
@@ -189,5 +192,23 @@ public class OfferServiceImpl implements OfferService {
     @Override
     public void setDeleted(int offerId, boolean deleted) {
         offerRepository.setDeleted(offerId, deleted);
+    }
+
+    @Override
+    public <T> Page<T> findDeletedByUserId(int id, int page, int pageSize, Class<T> returnType) {
+        Pageable pageRequest = PageRequest.of(page, pageSize);
+        Page<Offer> offersPage =  offerRepository.findAllByDeletedIsTrueAndUserUserId(id, pageRequest);
+        List<T> offerDTOList = offersPage.getContent().stream().map(offer -> modelMapper.map(offer, returnType)).toList();
+        Page<T> resultPage = new PageImpl<>(offerDTOList, pageRequest, offersPage.getTotalElements());
+        return resultPage;
+    }
+
+    @Override
+    public <T> Page<T> findConcludedByUserId(int id, int page, int pageSize, Class<T> returnType) {
+        Pageable pageRequest = PageRequest.of(page, pageSize);
+        Page<Offer> offersPage =  offerRepository.findConcludedByUserId(id, pageRequest);
+        List<T> offerDTOList = offersPage.getContent().stream().map(offer -> modelMapper.map(offer, returnType)).toList();
+        Page<T> resultPage = new PageImpl<>(offerDTOList, pageRequest, offersPage.getTotalElements());
+        return resultPage;
     }
 }

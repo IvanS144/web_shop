@@ -16,5 +16,7 @@ public interface OfferService {
     <T> T findById(int id, Class<T> returnType);
     <T> Page<T> findByUserId(int id, int page, int pageSize, Class<T> returnType);
     void setDeleted(int offerId, boolean deleted);
+    <T> Page<T> findDeletedByUserId(int id, int page, int pageSize, Class<T> returnType);
+    <T> Page<T> findConcludedByUserId(int id, int page, int pageSize, Class<T> returnType);
 
 }

@@ -3,17 +3,20 @@ package com.ip.web_shop.controller;
 import com.ip.web_shop.model.dto.PurchaseDTO;
 import com.ip.web_shop.model.dto.request.PurchaseRequest;
 import com.ip.web_shop.service.PurchaseService;
+import lombok.extern.apachecommons.CommonsLog;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("/purchases")
 @CrossOrigin(origins = "http://localhost:4200")
+@CommonsLog
 public class PurchaseController {
     private final PurchaseService purchaseService;
     private final ModelMapper modelMapper;
@@ -33,9 +36,10 @@ public class PurchaseController {
     }
 
     @PostMapping
-    public ResponseEntity<PurchaseDTO> create(@RequestBody PurchaseRequest purchaseRequest){
+    public ResponseEntity<PurchaseDTO> create(@RequestBody @Valid PurchaseRequest purchaseRequest){
         //Purchase purchaseRequest = modelMapper.map(purchaseDTO, Purchase.class);
         PurchaseDTO purchaseReply = purchaseService.addFromRequest(purchaseRequest, PurchaseDTO.class);
+        log.info("User "+ purchaseReply.getUser().getUserName() +" [id = "+purchaseReply.getUser().getUserId()+"] completed a purchase, purchaseId =  "+ purchaseReply.getPurchaseId());
         return ResponseEntity.status(HttpStatus.OK).body(purchaseReply);
     }
 

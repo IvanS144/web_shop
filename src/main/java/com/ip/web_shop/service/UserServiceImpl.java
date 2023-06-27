@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
         user = userRepository.saveAndFlush(user);
         ActivationCode activationCode = new ActivationCode();
         activationCode.setValue(String.valueOf(new SecureRandom().nextInt(1000,10000)));
-        activationCode.setValidUntil(LocalDateTime.now().plusMinutes(15L));
+        activationCode.setValidUntil(LocalDateTime.now().plusMinutes(1L));
         activationCode.setUser(user);
         activationCodeRepository.saveAndFlush(activationCode);
         emailService.sendEmail("Naslov", activationCode.getValue(), user.getEmail());

@@ -4,6 +4,8 @@ import com.ip.web_shop.model.dto.request.MessageRequest;
 import com.ip.web_shop.service.MessageService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/messages")
 @CrossOrigin(origins = "http://localhost:4200")
@@ -15,7 +17,7 @@ public class MessageController {
     }
 
     @PostMapping
-    public void addMessage(@RequestBody MessageRequest request){
+    public void addMessage(@RequestBody @Valid MessageRequest request){
         messageService.addMessage(request);
     }
 }

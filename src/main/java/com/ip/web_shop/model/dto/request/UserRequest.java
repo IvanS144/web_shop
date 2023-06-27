@@ -15,7 +15,8 @@ public class UserRequest {
     private String email;
     @NotBlank
     private String userName;
-    @Size(min = 8)
+    @Size(min = 1)
+    @NotBlank
     private String password;
     @Min(value = 1)
     @NotNull

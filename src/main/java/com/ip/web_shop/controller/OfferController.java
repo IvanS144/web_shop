@@ -4,15 +4,19 @@ import com.ip.web_shop.model.dto.OfferDTO;
 import com.ip.web_shop.model.dto.request.OfferRequest;
 import com.ip.web_shop.model.dto.request.SearchRequest;
 import com.ip.web_shop.service.OfferService;
+import lombok.extern.apachecommons.CommonsLog;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/offers")
 @CrossOrigin(origins = "http://localhost:4200")
+@CommonsLog
 public class OfferController {
     private final OfferService offerService;
     private final ModelMapper modelMapper;
@@ -32,14 +36,15 @@ public class OfferController {
     }
 
     @PostMapping
-    public ResponseEntity<OfferDTO> create(@RequestBody OfferRequest offerRequest){
+    public ResponseEntity<OfferDTO> create(@RequestBody @Valid OfferRequest offerRequest){
 //        Offer offerRequest = modelMapper.map(offerDTO, Offer.class);
         OfferDTO offerReply = offerService.addFromRequest(offerRequest, OfferDTO.class);
+        log.info("User "+offerReply.getUser().getUserName()+" created new offer with id "+ offerReply.getOfferId());
         return ResponseEntity.status(HttpStatus.OK).body(offerReply);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<OfferDTO> update(@PathVariable Integer id, @RequestBody OfferRequest offerRequest){
+    public ResponseEntity<OfferDTO> update(@PathVariable Integer id, @RequestBody @Valid OfferRequest offerRequest){
         //Offer offerRequest = modelMapper.map(offer, Offer.class);
         OfferDTO offerReply = offerService.updateFromRequest(offerRequest, id, OfferDTO.class);
         return ResponseEntity.status(HttpStatus.OK).body(offerReply);
@@ -77,6 +82,22 @@ public class OfferController {
         if(offerDTO.getDeleted()!=null){
             offerService.setDeleted(id, offerDTO.getDeleted());
         }
+    }
+
+    @GetMapping("/users/{id}/deleted")
+    public ResponseEntity<Page<OfferDTO>> getDeletedByUserId(@RequestParam(name ="page_size", defaultValue = "10", required = false) Integer pageSize,
+                                                             @RequestParam(name="page", defaultValue = "0", required = false) Integer page,
+                                                             @PathVariable Integer id){
+        Page<OfferDTO> offers= offerService.findDeletedByUserId(id, page, pageSize, OfferDTO.class);
+        return ResponseEntity.status(HttpStatus.OK).body(offers);
+    }
+
+    @GetMapping("/users/{id}/concluded")
+    public ResponseEntity<Page<OfferDTO>> getConcludedByUserId(@RequestParam(name ="page_size", defaultValue = "10", required = false) Integer pageSize,
+                                                               @RequestParam(name="page", defaultValue = "0", required = false) Integer page,
+                                                               @PathVariable Integer id){
+        Page<OfferDTO> offers = offerService.findConcludedByUserId(id, page, pageSize, OfferDTO.class);
+        return ResponseEntity.status(HttpStatus.OK).body(offers);
     }
 
 
